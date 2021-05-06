@@ -10,11 +10,11 @@ function [freqs,amplitudes]=annihiliatingFilterSimple(signal,fs)
     
 % constructing toeplitz matrix
     K=n/2;
-    sig_mat= toeplitz( flip(signal(1:K)),signal(K:2*K-1));
+    sig_mat= toeplitz(signal(K:2*K-1),fliplr(signal(1:K)));
     b=-1*signal(K+1:2*K);
     
     %resulting annihiliating filter
-    h=sig_mat\b.';
+    h=linsolve(sig_mat,b.');
     
     % zero finding operation
     zeros=roots([1 h.']);
