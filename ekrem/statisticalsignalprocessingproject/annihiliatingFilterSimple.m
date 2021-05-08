@@ -1,5 +1,5 @@
 
-function [freqs,amplitudes]=annihiliatingFilterSimple(signal,fs)
+function [freqs,amplitudes,rcondToeplitz,rcondAmp]=annihiliatingFilterSimple(signal,fs)
 % implements annihiliating filter approach
 
     if(mod(length(signal),2)==1)
@@ -12,7 +12,7 @@ function [freqs,amplitudes]=annihiliatingFilterSimple(signal,fs)
     K=n/2;
     sig_mat= toeplitz(signal(K:2*K-1),fliplr(signal(1:K)));
     b=-1*signal(K+1:2*K);
-    
+    rcondToeplitz=rcond(sig_mat);
     %resulting annihiliating filter
     h=linsolve(sig_mat,b.');
     
@@ -28,9 +28,11 @@ function [freqs,amplitudes]=annihiliatingFilterSimple(signal,fs)
    A = exp ((0:K-1)' * (-1j * ang_freqs.'));
    s=(signal(1:K)).';
    
+   rcondAmp=rcond(A);
+   
    amplitudes= A\s;
    
-   [freqs,amplitudes]=takeGreatest(freqs,amplitudes);
+   [freqs,amplitudes]=takeGreatest(freqs,amplitudes,0);
    
    
 end

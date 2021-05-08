@@ -33,9 +33,7 @@ beginTime=4.15;
 % when that happens, giving less samples to the algorithm works,
 %so first start with timrInterval=0.3 s. because the frequency precision
 %is the best in this value. if the amplitude matrix is too low,
-% then decrease the time interval, for example to 0.1. We have worse
-% results in terms of precision of frequencies, but we have the amplitudes
-
+% then decrease the time interval,
 beginSample=round(beginTime*fs);
 numSamples=round(timeInterval*fs); % number of samples for the selected data
 
@@ -74,7 +72,7 @@ end
 wholeFreqs=[];
 wholeAmps=[];
 
-for beginTime=[0.01:0.2:5.69]
+for beginTime=[0.2:0.2:5.69]
     
     beginSample=floor(beginTime*fs);
     chunkData=data(beginSample:beginSample+numSamples);
