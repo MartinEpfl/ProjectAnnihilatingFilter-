@@ -33,16 +33,17 @@ title('Estimated Magnitude Line Spectra');
 excessRate=15;
 [freqs, amplitudes,rcondF,rcondA]= annihiliatingFilterSimple(data(1:4*numSin*excessRate),fs);
 
-if(rcondA>1e-5)
+if(rcondA<1e-5)
     plotLineSpectraM(freqs,amplitudes,fs,2*numSin*excessRate);
     title('Estimated Magnitude Line Spectra with Excessive Samples');
 else
-    plotLineSpectraF(freqs,fs,2*numSin*excessRate);
+    plotLineSpectraF(freqsfs,2*numSin*excessRate);
     title("Estimated Frequencies");
-    error("The reciprocal condition number of amplitude estimation matrix is too low. Please change the number of samples!!!")
+    error("The reciprocal condition number of amplitude estimation matrix is too low. Please change it!!!")
 end
 
-
+%excessRate=3 -> rconda ->9.97e-18 --> figure estimexcess1.eps
+%excessRate=11 -> rcondf ->9.97e-19
 
 %% Limitations
 % we work with 2 sinus fnc now;
@@ -58,14 +59,14 @@ x1=amps(1)*sin(2*pi*f(1)*t);
 x2=amps(2)*sin(2*pi*f(2)*t);
 x=x1+x2;
 
-plotLineSpectraM([f -f],0.5*[amps amps],fs,4);
+plotLineSpectra([f -f],0.5*[amps amps],fs,4);
 % line spectra of the generated signal
 title(' Magnidute Line Spectra of the Generated Signal');
 
 % eight samples are enough
 [freqs, amplitudes,rcondF,rcondA]= annihiliatingFilterSimple(x(1:8),fs);
 
-plotLineSpectraM(freqs,amplitudes,fs,4);
+plotLineSpectra(freqs,amplitudes,fs,4);
 % line spectra of the generated signal
 title(' Estimated Magnidute Line Spectra');
 

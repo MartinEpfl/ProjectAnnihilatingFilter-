@@ -2,6 +2,7 @@ clc;
 clear all;
 
 [data,fs]=audioread("data/Clean Bass.wav");
+
 data=data(:,1); %% stereo signal is unnecessary one component is enough
 data=data(1:6*fs);
 data=data.'; % make it row vector
@@ -68,7 +69,11 @@ end
 % sometimes Amplitude can not be estimated or poorly estimated or can not
 %be estimated, then decreasing the interval sometimes work
 
-%% aa
+%% Full Analysis
+
+%below, different portions of the signal is taken and 
+% annihiliating filter method is applied, if the cond number if
+% amplitude matrix is not good enough, number of given samples is changed
 
 
 wholeFreqs=[];
@@ -108,7 +113,9 @@ for beginTime=[0.01:0.2:5.69]
 
 end
 
-[sWholeFreqs, sWholeAmps]=takeGreatest(wholeFreqs,wholeAmps,1);
+% printing all observations
+
+[sWholeFreqs, sWholeAmps]=takeGreatest(wholeFreqs,wholeAmps,0);
 plotLineSpectraM(sWholeFreqs,sWholeAmps,fs,length(wholeAmps));
 
 
