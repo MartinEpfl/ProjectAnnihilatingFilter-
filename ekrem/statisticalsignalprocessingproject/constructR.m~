@@ -3,5 +3,5 @@ function R = constructR(c,m)
 %c is a column vector
 k=length(c)-1;
 %k is the number of observed freq.
-R=toeplitz([c(k+1) zeros(1,m-k)],[flip(c(1:k+1)).' zeros(1,m-k)]);
+R=toeplitz([c(k+1) zeros(1,m)],[flip(c(1:k+1))' zeros(1,k-1)]);
 end

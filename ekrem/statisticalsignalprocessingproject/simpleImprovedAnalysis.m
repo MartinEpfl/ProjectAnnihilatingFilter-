@@ -5,20 +5,23 @@ clear all;
 
 % this analysis is made to be sure that algorithm works fine
 fs= 400; % hz (sampling freqs)
-numSamples=800;
+numSamples=200;
 t= (0:1/fs:(numSamples-1)/fs).';
-
 f1=120;
 f2=160;
 
 x1=sin(2*pi*f1*t);
 x2=sin(2*pi*f2*t);
 x=x1+x2;
-noise=10*randn(length(x),1);
-x=x+noise;
+noisefactor=0.5;
+noise=noisefactor*randn(length(x),1);
+x_noisy=x+noise;
 
-[freqs,b,i,j]=annihiliatingFilterImproved(x(1:8),fs,0.1);
+[freqs,b,i,j]=annihiliatingFilterImproved(x_noisy,fs,4,noisefactor^2*length(x));
 figure;
-plot(x(1:8),'*');
+plot(x_noisy(1:20),'g.-');
 hold on;
-plot(b,'.-');
+plot(x(1:20),'b*-');
+plot(b(1:20),'r*-');
+legend('Noisy signal','Noiseless Signal','Estimated Signal');
+
