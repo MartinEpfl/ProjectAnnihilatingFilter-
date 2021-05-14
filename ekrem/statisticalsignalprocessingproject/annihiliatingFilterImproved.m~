@@ -1,5 +1,5 @@
 
-function [freqs,b_n,i,j]=annihiliatingFilterImproved(signal,fs,k,noisepower)
+function [freqs,amplitudes,rcondAmp,b_n,i,j]=annihiliatingFilterImproved(signal,fs,k,noisepower)
 % implements improved annihiliating filter approach with constrained
 % optimization
 % in the algorithm signal is the sparse signal samples, but we do here as uniform
@@ -27,13 +27,13 @@ function [freqs,b_n,i,j]=annihiliatingFilterImproved(signal,fs,k,noisepower)
         for j=1:maxIteration
             % constructing augmented matrix for updating c_n
             
-            aug_matrix =[zeros(k+1,k+1), constructT(signal,k)' , zeros(K+1,m+1) ,   c_0;...
+            aug_matrix =[zeros(k+1,k+1), constructT(signal,k)' , zeros(k+1,m+1) ,   c_0;...
                          constructT(signal,k)   zeros(m-k+1,m-k+1)     -1*constructR(c_n1,m) zeros(m-k+1,1);...
                          zeros(m+1,k+1) -1*constructR(c_n1,m)'   eye(m+1)    zeros(m+1,1);...
                          c_0'            zeros(1,2*m-k+3)];
             
             res= aug_matrix\[zeros(2*m+3,1) ; 1];
-            c_n=res(1:K+1);
+            c_n=res(1:k+1);
             
             % constructing mat soln for finding b_n
             
@@ -55,12 +55,11 @@ function [freqs,b_n,i,j]=annihiliatingFilterImproved(signal,fs,k,noisepower)
         end
     end
     
-    % zero finding operation
-    zeroes=roots(c_n);
     
-    % angles
-    ang_freqs=angle(zeroes); % normalized angular freqs
-    freqs=ang_freqs/(2*pi)*fs; % normal frequencies
+   
+    [freqs,amplitudes]=takeGreatest(freqs,amplitudes,0);
+    
+    
     
     
 end

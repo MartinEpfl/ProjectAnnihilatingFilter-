@@ -1,5 +1,5 @@
 
-function [freqs,b_n,i,j]=annihiliatingFilterImproved(signal,fs,k,noisepower)
+function [freqs,amplitudes,rcondAmp,b_n,i,j]=annihiliatingFilterImproved(signal,fs,k,noisepower)
 % implements improved annihiliating filter approach with constrained
 % optimization
 % in the algorithm signal is the sparse signal samples, but we do here as uniform
@@ -50,17 +50,29 @@ function [freqs,b_n,i,j]=annihiliatingFilterImproved(signal,fs,k,noisepower)
            c_n1=c_n;
         end
         
-        if((signal-b_n)'*(signal-b_n)< noisepower)
+        % zero finding operation
+        zeroes=roots(c_n);
+    
+        % angles
+        ang_freqs=angle(zeroes); % normalized angular freqs
+        freqs=ang_freqs/(2*pi)*fs; % normal frequencies
+    
+        A = exp ((0:k-1)' * (-1j * ang_freqs.'));
+        rcondAmp=rcond(A);
+   
+        amplitudes= A\b_n(1:k);
+        
+        if((signal-b_n)'*(signal-b_n)< noisepower &...
+                rcondAmp>1e-5)
                break;
         end
     end
     
-    % zero finding operation
-    zeroes=roots(c_n);
     
-    % angles
-    ang_freqs=angle(zeroes); % normalized angular freqs
-    freqs=ang_freqs/(2*pi)*fs; % normal frequencies
+   
+    [freqs,amplitudes]=takeGreatest(freqs,amplitudes,0);
+    
+    
     
     
 end
