@@ -1,11 +1,14 @@
 
-function [freqs,amplitudes,rcondAmp,b_n,i,j]=annihiliatingFilterImproved(signal,fs,k,noisepower)
+function [freqs,amplitudes,b_n,i,j,success]=annihiliatingFilterImproved(signal,fs,k,noisepower)
 % implements improved annihiliating filter approach with constrained
 % optimization
 % in the algorithm signal is the sparse signal samples, but we do here as uniform
 % samples of sinusoidal sum
 %a is given as column vector
 %k is the number of estimated frequencies
+% b_n is the final estimated signal withput noise
+    success=false;
+    
     m=length(signal)-1;   
     
     
@@ -49,30 +52,25 @@ function [freqs,amplitudes,rcondAmp,b_n,i,j]=annihiliatingFilterImproved(signal,
            
            c_n1=c_n;
         end
+       
         
-        % zero finding operation
-        zeroes=roots(c_n);
-    
-        % angles
-        ang_freqs=angle(zeroes); % normalized angular freqs
-        freqs=ang_freqs/(2*pi)*fs; % normal frequencies
-    
-        A = exp ((0:k-1)' * (-1j * ang_freqs.'));
-        rcondAmp=rcond(A);
-   
-        amplitudes= A\b_n(1:k);
-        
-        if((signal-b_n)'*(signal-b_n)< noisepower &...
-                rcondAmp>1e-5)
-               break;
+        if((signal-b_n)'*(signal-b_n)< noisepower)
+            success=true;
+            break;
         end
     end
     
     
-   
+    % zero finding operation
+    zeroes=roots(c_n);
+    
+    % angles
+    ang_freqs=angle(zeroes); % normalized angular freqs
+    freqs=ang_freqs/(2*pi)*fs; % normal frequencies
+    
+    A = exp ((0:m)' * (-1j * ang_freqs.'));
+    amplitudes= A\b_n;
+    
     [freqs,amplitudes]=takeGreatest(freqs,amplitudes,0);
-    
-    
-    
     
 end

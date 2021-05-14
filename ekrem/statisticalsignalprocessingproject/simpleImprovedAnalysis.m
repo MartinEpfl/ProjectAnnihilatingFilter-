@@ -18,23 +18,18 @@ x1=sin(2*pi*f1*t);
 x2=sin(2*pi*f2*t);
 x=x1+x2;
 noisefactor=0.3;
+k=16;  % number of frequencies we want to find
 noise=noisefactor*randn(length(x),1);
 x_noisy=x+noise;
 
-[freqs,amplitudes,rcondA,b,i,j]=annihiliatingFilterImproved(x_noisy,fs,8,noisefactor^2*length(x_noisy));
+errorTolerance=1;
+[freqs,amplitudes,estSignal,i,j,success]=annihiliatingFilterImproved(x_noisy,fs,k,errorTolerance * noisefactor^2*length(x_noisy));
 figure;
-plot(x_noisy(1:20),'g.-');
-hold on;
-plot(x(1:20),'b*-');
-plot(b(1:20),'r*-');
+plot(x_noisy(1:20),'g.-'); hold on;
+plot(x(1:20),'b*-'); plot(estSignal(1:20),'r*-');
 legend('Noisy signal','Noiseless Signal','Est. Noiseless Signal');
+title('Time Evolution of The Signals');
 
-if(rcondA>1e-5)
-    plotLineSpectraM(freqs,amplitudes,fs,8);
-    title('Est. Line Spectra');
-else
-    plotLineSpectraF(freqs,fs,8);
-    title("Estimated Frequencies");
-    error("The reciprocal condition number of amplitude estimation matrix is too low. Please change the number of samples!!!")
-end
+plotLineSpectraM(freqs,amplitudes,fs,length(freqs));
+title('Estimated Line Spectra');
 

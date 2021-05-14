@@ -1,6 +1,0 @@
-function T = constructT(b,k)
-% k is the number of estimated freq.
-
-
-T = toeplitz(b(k+1:2*k),flip(b(1:k+1)));
-end
