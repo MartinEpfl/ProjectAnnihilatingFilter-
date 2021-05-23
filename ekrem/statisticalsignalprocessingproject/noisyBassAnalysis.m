@@ -18,6 +18,7 @@ fs=fs/downsamp;
 my_tfplot(dataC,fs,'y(f)','Clean Bass FFT Signal',3);
 
 %% observe signal differences between noisy and clean
+% epsilon square is found here
 numFullS=length(dataC);  t= 0:1/fs:(numFullS-1)/fs;
 figure; plot(t,dataN,'r'); hold on; plot(t,dataC,'b');
 legend('Noisy Signal','Clean Signal');
@@ -26,9 +27,9 @@ diff=dataC-dataN;
 epsilon2= diff'*diff / numFullS;
 
 %% now we take portions of data
-timeInterval=0.14; %s (this value is important if too small, no freq is observed)
-beginTime=0.44;
-numFreqs=100;
+timeInterval=0.11; %s (this value is important if too small, no freq is observed)
+beginTime=1.46;
+numFreqs=70;
 errorTolerance=1;
 % we start to take portions of the data
 beginSample=round(beginTime*fs);
@@ -43,6 +44,10 @@ chunkN=chunkN-mean(chunkN);
 % running the algorithm
 
 [freqs,amplitudes,estSignal,i,j,success] = annihiliatingFilterImproved(chunkN,fs,numFreqs,errorTolerance*numSamples*epsilon2);
+
+% this lime is for estimation of clean signal,do not uncomment if not
+% necessary
+%[freqs,amplitudes,estSignal,i,j,success] = annihiliatingFilterImproved(chunkC,fs,numFreqs,errorTolerance*numSamples*epsilon2);
 
 
 t= 0:1/fs:(numSamples)/fs;
@@ -66,8 +71,10 @@ title("Estimated Line Spectra");
 
 %this value can be changed 
 % Decreasing it too much decreases freq resolution but works much faster
-%0.06-0.14 interval is fine (0.12 is better)
+%0.06-0.14 interval is fine.
 timeInterval=0.1;
+
+
 numFreqs=24;
 numSamples=round(timeInterval*fs);
 errorTolerance=1.3;
